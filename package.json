@@ -1,0 +1,15 @@
+{
+  "name": "freqdict",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "letry",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.flattendeep": "^4.4.0",
+    "lodash.get": "^4.4.2"
+  }
+}
