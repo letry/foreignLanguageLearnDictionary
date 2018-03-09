@@ -1,3 +1,6 @@
+const fs = require('fs');
+const https = require('https');
+
 module.exports = function translCountSet() {
     let allCountWords = require('./dictionaries/allCountWords'),
         freqArr = getFreqArr(allCountWords);

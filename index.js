@@ -1,54 +1,48 @@
 const fs = require('fs');
-const https = require('https');
+const util = require('util');
 const asker = require('./modules/ask');
-const addToCountSet = require('./modules/addToCountSet');
 const flatTree = require('./modules/flatTree');
+const addToDictionary = require('./modules/addToDictionary');
+const removeFromDictionary = require('./modules/removeFromDictionary');
+const selectDictionary = require('./modules/selectDictionary');
+const createDictionary = require('./modules/createDictionary');
+global.dictionary = `${__dirname}/dictionaries/default.json`;
 
 const upDown = [['По возрастанию'], ['По убыванию']];
-
 const mainActions = [
-  ['Добавить в набор', [
+  ['Выбрать рабочий словарь'],
+  ['Создать словарь'],
+  ['Добавить в словарь', [
     ['Ввести вручную'],
     ['Файл со словами']
   ]],
-  ['Удалить из набора', [
-    ['Найти вручную'],
+  ['Удалить из словаря', [
+    ['Ввести вручную'],
     ['Файл со словами']
   ]],
-  ['Упорядочить набор', [
+  ['Упорядочить словарь', [
     ['По алфавиту', upDown],
     ['По количеству повторений', upDown]
   ]],
-  ['Перевести частотный набор'],
+  ['Перевести словарь'],
   ['Вывод результата'],
   ['Выход']
 ];
 
 const resolvers = [
-  addToCountSet,,,,,
+  selectDictionary,
+  createDictionary,
+  addToDictionary,
+  removeFromDictionary,,,,
   [() => process.exit()]
-]
+];
 
 void async function main() {
   console.log('Добро пожаловать. Выберите команду:\n');
   const answer = await asker(mainActions);
   const funcSequence = flatTree(resolvers, answer, 0, 1);
 
-  funcSequence.reduceRight((result, func) => 
+  await funcSequence.reduceRight((result, func) => 
     result = result.then(func), Promise.resolve());
-  //main();
+  main();
 }();
-
-function delFromCountSet() {
-  
-}
-
-function writeLocalDict(concTransl) {
-  let date = new Date(),
-      getDate = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear();
-
-  fs.writeFileSync(
-    `./dictionaries/${getDate}.json`,
-    JSON.stringify(concTransl)
-  )
-}
