@@ -25,7 +25,6 @@ const mainActions = [
   ]],
   ['Перевести словарь'],
   ['Вывод результата'],
-  ['Трансформация словаря'],//Фильтры
   ['Выход']
 ];
 
@@ -36,7 +35,7 @@ const resolvers = [
   removeFromDictionary,
   sortDictionary,
   translateDictionary,
-  outputDictionary,,
+  outputDictionary,
   [() => process.exit()]
 ];
 

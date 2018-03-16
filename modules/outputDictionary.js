@@ -1,34 +1,29 @@
-module.exports = function outFreqTrans() {
-    let freqTrans = require('./dictionaries/allTranslWords'),
-        resp = outputTransl(freqTrans);
-    console.log('Записано ' + resp + ' блоков');
-    ask();
-  }
+const fs = require('fs');
+const pathParser = require('path').parse;
+const ask = require('./askPromise');
+
+module.exports = [async () => {
+    const answer = +await ask('Введите максимальное количество слов в результирующей таблице: ') || 10;
+    const translate = require(global.dictionary);
+    const resp = outputTransl(translate, answer);
+    console.log('Записано');
+  }];
   
-  function outputTransl(concTransl) {
-    let templ = fs.readFileSync('./outputText/doc.html') + '',
-        tblPos = templ.indexOf('<table>') + 7,
-        tblendOPos = templ.indexOf('</table>'),
-        beforeTbl = templ.slice(0, tblPos),
-        afterTbl = templ.slice(tblendOPos);
-    
-    let tbodys = [],
-        trs = '',
-        i = 0;
-    
-    for (let word in concTransl) {
-      trs += `<tr><td>${word + ' - ' + concTransl[word]}</td></tr>`;
-      ++i;
-      if (i === 10) {
-        tbodys.push(trs);
-        trs = '';
-        i = 0;
-      }
+const splitByCount = (array, splitCount) => {
+  return array.reduce((result, item) => {
+    let lastArray = result[result.length-1];
+    if(!lastArray || lastArray.length >= splitCount) {
+      lastArray = [];
+      result.push(lastArray);
     }
-    
-    tbodys = '<tbody>' + tbodys.join('</tbody><tbody>') + '</tbody>';
-    
-    fs.writeFileSync('./outputText/doc.html', beforeTbl + tbodys + afterTbl);
-    
-    return tbodys.length;
-  }
+    lastArray.push(item);
+    return result;
+  }, []);
+}
+
+const outputTransl = (translate, maxWordCount) => {
+  const path = pathParser(global.dictionary);
+  const splitted = splitByCount(Object.entries(translate), maxWordCount);
+  const result = splitted.map(part => `<tbody>${part.map(word => `<tr><td>${word.join(' - ')}</td></tr>`).join('')}</tbody>`).join('');
+  fs.writeFileSync(`./outputText/${path.name}.html`, `<link rel="stylesheet" href="./style.css"><table>${result}</table>`);
+}
