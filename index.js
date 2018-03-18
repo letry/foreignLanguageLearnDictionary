@@ -1,46 +1,51 @@
-const asker = require('./modules/ask');
-const flatTree = require('./modules/flatTree');
-
-const addToDictionary = require('./modules/addToDictionary');
-const translateDictionary = require('./modules/translateDictionary');
-const removeFromDictionary = require('./modules/removeFromDictionary');
-const selectDictionary = require('./modules/selectDictionary');
-const createDictionary = require('./modules/createDictionary');
-const outputDictionary = require('./modules/outputDictionary');
-const sortDictionary = require('./modules/sortDictionary');
-
-global.dictionary = `${__dirname}/dictionaries/default.json`;
-
+require('./config');
+const pathParser = require('path').parse;
+const asker = require('./src/utils/ask');
+const flatTree = require('./src/utils/flatTree');
 const fileOrInput = [['Ввести вручную'], ['Файл со словами']];
 const ascending = [['По возрастанию'], ['По убыванию']];
+const moreOrLess = [['Более чем'], ['Менее чем']]
 
 const mainActions = [
-  ['Выбрать рабочий словарь'],
+  ['Выбрать текущий словарь'],
   ['Создать словарь'],
+  ['Удалить словарь'],
   ['Добавить в словарь', fileOrInput],
   ['Удалить из словаря', fileOrInput],
   ['Упорядочить словарь', [
     ['По ключу', ascending],
     ['По значению', ascending]
   ]],
+  ['Фильтровать словарь', [
+    ['По длине ключа', moreOrLess],
+    ['По значению (длина или кол-во повторов)', moreOrLess]
+  ]],
   ['Перевести словарь'],
   ['Вывод результата'],
   ['Выход']
 ];
 
+const requires = (dir, ...paths) => 
+  paths.map(file => require(dir + file))
+
 const resolvers = [
-  selectDictionary,
-  createDictionary,
-  addToDictionary,
-  removeFromDictionary,
-  sortDictionary,
-  translateDictionary,
-  outputDictionary,
+  ...requires(
+    './src/modules/',
+    'selectDictionary',
+    'createDictionary',
+    'removeDictionary',
+    'addWordsToDictionary',
+    'removeFromDictionary',
+    'sortDictionary',
+    'filterDictionary',
+    'translateDictionary', 
+    'outputDictionary',
+  ),
   [() => process.exit()]
 ];
 
 void async function main() {
-  console.log('Добро пожаловать. Выберите команду:\n');
+  console.log(`Текущий словарь: ${global.dictionaryName}. Выберите команду:\n`);
   const answer = await asker(mainActions);
   const funcSequence = flatTree(resolvers, answer, 0, 1);
 

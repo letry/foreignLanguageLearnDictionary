@@ -1,9 +1,8 @@
 const fs = require('fs');
-const ask = require('./askPromise');
+const ask = require('../utils/askPromise');
 
 module.exports = [async () => {
-    const dirname = `${__dirname}/../dictionaries`;
     const answer = await ask('Введите название нового словаря: ');
-    fs.writeFileSync(`${dirname}/${answer}.json`, '{}');
+    fs.writeFileSync(`${global.paths.dictionaries}/${answer}.json`, '{}');
     console.log('Словарь создан');
 }];

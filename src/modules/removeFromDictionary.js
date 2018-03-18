@@ -1,8 +1,8 @@
 const fs = require('fs');
-const askPromise = require('./askPromise');
 const flattenDeep = require('lodash.flattendeep');
-const fileSelector = require('./fileSelector');
-const getFileTexts = require('./getFileTexts');
+const askPromise = require('../utils/askPromise');
+const fileSelector = require('../utils/fileSelector');
+const getFileTexts = require('../utils/getFileTexts');
 
 module.exports = [
     plainText => {
@@ -14,7 +14,7 @@ module.exports = [
     }, [
         [() => askPromise('Вводите слова:')],
         [async () => {
-            const inputDirPath = `${__dirname}/../inputTexts`;
+            const inputDirPath = global.paths.input;
             const selectedPath = await fileSelector(inputDirPath);
             const text = getFileTexts([inputDirPath, ...selectedPath].join('/'));
             return flattenDeep(text).join(' ');

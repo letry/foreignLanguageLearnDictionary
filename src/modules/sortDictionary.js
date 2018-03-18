@@ -6,7 +6,7 @@ module.exports = [
     ({byValue, ascending}) => {
         const dictionary = JSON.parse(fs.readFileSync(global.dictionary));
         const entries = Object.entries(dictionary);
-        const mapper = val => +val[+byValue]//If is number then compare by char code
+        const mapper = val => +val[+byValue]//If is a string then compare by char code
             ? +val[+byValue] : val[+byValue].toString().charCodeAt();
         
         entries.sort((prev, next) => {
