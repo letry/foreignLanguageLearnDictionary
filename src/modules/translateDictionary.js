@@ -2,13 +2,14 @@ const fs = require('fs');
 const https = require('https');
 const pathParser = require('path').parse;
 const request = require('request-promise-native');
-const flattendeep = require('lodash.flattendeep');
 const splitArrayBy = require('../utils/splitArrayBy');
+const apiUrl = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
+const apiKey = 'trnsl.1.1.20170502T113730Z.a2c8556b9ab76555.89dd8f0846830d673e2bf086d97ee194450509b9';
 
 module.exports = [async () => {
     const allCountWords = JSON.parse(fs.readFileSync(global.dictionary));
     const words = Object.keys(allCountWords);
-    const translate = flattendeep(await getTranslate(words));
+    const translate = [].concat(...(await getTranslate(words)));
     const translObject = words.reduce((result, item, i) => 
       Object.assign(result, {[item]: translate[i]}), {});
 
@@ -30,21 +31,13 @@ const splitByInnerStringsLength = (arrayOfString, maxSubArrayStringLength, addit
 const getTranslate = words => {
   const splitted = splitByInnerStringsLength(words, 1e4, 3); //max text length is 10000
   return Promise.all(splitted.map(stringArr => 
-    sendTranslRequest(stringArr.join('|| '))
-      .then(data => {
-        console.log(stringArr);
-        return data.text[0].split('|').filter(str => str).map(word => word.trim())
-      })
+    sendTranslRequest(stringArr)
+      .then(({text}) => text)
   ));
 }
 
-const sendTranslRequest = text => request({
-  method: 'POST',
-  uri: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
-  qs: {
-    lang: 'en-ru',
-    key: 'trnsl.1.1.20170502T113730Z.a2c8556b9ab76555.89dd8f0846830d673e2bf086d97ee194450509b9'
-  },
-  form: {text},
+const sendTranslRequest = words => request({
+  method: 'GET',
+  uri: `${apiUrl}?key=${apiKey}&${words.map(word => `text=${word}`).join('&')}&lang=en-ru`,
   json: true
 });

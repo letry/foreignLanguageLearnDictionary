@@ -1,6 +1,6 @@
 const fs = require('fs');
-const flattenDeep = require('lodash.flattendeep');
 const askPromise = require('../utils/askPromise');
+const flattenDeep = require('../utils/flattenArray');
 const fileSelector = require('../utils/fileSelector');
 const getFileTexts = require('../utils/getFileTexts');
 const getCountRepeatMap = require('../utils/getCountRepeatMap');

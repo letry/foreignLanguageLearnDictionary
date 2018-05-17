@@ -1,5 +1,5 @@
 const fs = require('fs');
-const flattenDeep = require('lodash.flattendeep');
+const flatten = require('../utils/flattenArray');
 const askPromise = require('../utils/askPromise');
 const fileSelector = require('../utils/fileSelector');
 const getFileTexts = require('../utils/getFileTexts');
@@ -17,7 +17,7 @@ module.exports = [
             const inputDirPath = global.paths.input;
             const selectedPath = await fileSelector(inputDirPath);
             const text = getFileTexts([inputDirPath, ...selectedPath].join('/'));
-            return flattenDeep(text).join(' ');
+            return flatten(text).join(' ');
         }]
     ]
 ];
