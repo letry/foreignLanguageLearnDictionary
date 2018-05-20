@@ -9,13 +9,14 @@ const apiKey = 'trnsl.1.1.20170502T113730Z.a2c8556b9ab76555.89dd8f0846830d673e2b
 module.exports = [async () => {
     const allCountWords = JSON.parse(fs.readFileSync(global.dictionary));
     const words = Object.keys(allCountWords);
+    if (!words.length) return console.log('Словарь пуст');
     const translate = [].concat(...(await getTranslate(words)));
     const translObject = words.reduce((result, item, i) => 
       Object.assign(result, {[item]: translate[i]}), {});
 
     const parsedPath = pathParser(global.dictionary);
     fs.writeFileSync(`${[parsedPath.dir, parsedPath.name].join('/')}Translate.json`, JSON.stringify(translObject));
-    console.log('Переведено\n');
+    console.log(`Переведено и сохранено в ${parsedPath.name}Translate.json. Перед выводом результата выберите этот словарь`);
 }];
 
 const splitByInnerStringsLength = (arrayOfString, maxSubArrayStringLength, addition) => {
