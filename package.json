@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "node ./test"
   },
   "author": "letry",
   "license": "ISC",

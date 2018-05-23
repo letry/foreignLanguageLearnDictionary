@@ -4,5 +4,7 @@ const intFace = require('readline')
         output: process.stdout
     });
     
+global.intFace = intFace;
+
 module.exports = str => new Promise(resolve => 
     intFace.question(str, answer => resolve(answer)));
